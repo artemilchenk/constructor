@@ -70,15 +70,16 @@ button {
 }
 
 .letter:hover {
+    z-index: 1000;
+}
+
+.letter.active-drag {
+    cursor: grabbing;
+   /* transform: scale(1.05);*/
     background: #f0f8ff;
     border-color: #99c2ff;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
-}
 
-.letter:active {
-    cursor: grabbing;
-    transform: scale(1.05);
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
 }
 
 .selected {

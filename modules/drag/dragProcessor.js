@@ -1,16 +1,10 @@
-export class DragProcessor {
+class DragProcessor {
   draggedElement = null;
   interactionProcessor = null;
   transformProcessor = null;
 
-  offsetX = 0;
-  offsetY = 0;
-
   container = null;
   containerRect = null;
-
-  dragStartLeft = 0;
-  dragStartTop = 0;
 
   constructor(container, interactionProcessor, transformProcessor) {
     this.container = container;
@@ -28,74 +22,80 @@ export class DragProcessor {
       e.preventDefault();
       e.stopPropagation();
 
-      if (el.classList.contains("selected")) {
-        el.classList.remove("selected");
-      }
+      const selected = this.interactionProcessor.getSelectedLetters();
 
-      this.draggedElement = el;
+      if (selected.includes(el)) {
+        this.draggedElement = selected;
+      } else this.draggedElement = [el];
+
+      this.draggedElement.forEach((letter) => {
+        letter.classList.add("active-drag");
+      });
+
+      this.interactionProcessor.unsetSelected(selected);
 
       this.containerRect = this.container.getBoundingClientRect();
 
-      const rect = el.getBoundingClientRect();
+      this.draggedElement.forEach((element, index) => {
+        const rect = element.getBoundingClientRect();
 
-      this.dragStartLeft = rect.left - this.containerRect.left - 4;
-      this.dragStartTop = rect.top - this.containerRect.top - 4;
+        element._dragOffsetX = e.clientX - rect.left;
+        element._dragOffsetY = e.clientY - rect.top;
 
-      el.style.position = "absolute";
-      el.style.left = `${this.dragStartLeft}px`;
-      el.style.top = `${this.dragStartTop}px`;
+        element._dragStartLeft = rect.left - this.containerRect.left - 4;
+        element._dragStartTop = rect.top - this.containerRect.top - 4;
 
-      this.offsetX = e.clientX - rect.left;
-      this.offsetY = e.clientY - rect.top;
-
-      el.style.zIndex = 1000;
+        element.style.left = `${element._dragStartLeft}px`;
+        element.style.top = `${element._dragStartTop}px`;
+      });
     });
   }
 
   onMouseMove = (e) => {
     if (!this.draggedElement) return;
 
-    const x = e.clientX - this.containerRect.left - this.offsetX;
-    const y = e.clientY - this.containerRect.top - this.offsetY;
+    this.draggedElement.forEach((element) => {
+      element.style.position = "absolute";
 
-    this.transformProcessor.shift(this.draggedElement, x, y);
+      const x = e.clientX - this.containerRect.left - element._dragOffsetX;
+      const y = e.clientY - this.containerRect.top - element._dragOffsetY;
+
+      this.transformProcessor.shift(element, x, y);
+    });
   };
 
   onMouseUp = (e) => {
     if (!this.draggedElement) return;
 
-    this.draggedElement.style.zIndex = 0;
+    this.draggedElement.forEach((element) => {
+      const letterUnder = this.interactionProcessor.checkUnder(e, element, {
+        offsetX: element._dragOffsetX,
+        offsetY: element._dragOffsetY,
+      });
 
-    const letterUnder = this.interactionProcessor.checkUnder(
-      e,
-      this.draggedElement,
-      { offsetX: this.offsetX, offsetY: this.offsetY },
-    );
+      element.classList.remove("active-drag");
 
-    if (letterUnder) {
-      if (
-        this.interactionProcessor.checkForViewUnder(
-          this.draggedElement,
-          letterUnder,
-        )
-      ) {
-        this.draggedElement.style.position = "unset";
-      } else if (
-        this.interactionProcessor.checkForViewLetterOver(
-          this.draggedElement,
-          letterUnder,
-        )
-      ) {
-        letterUnder.style.position = "unset";
-      } else {
-        this.draggedElement.classList.add("active");
-        this.transformProcessor.swap(letterUnder);
+      if (letterUnder && !this.draggedElement.includes(letterUnder)) {
+        if (this.interactionProcessor.checkForViewUnder(element, letterUnder)) {
+          element.style.position = "unset";
+          element.classList.remove("active");
+        } else if (
+          this.interactionProcessor.checkForViewLetterOver(element, letterUnder)
+        ) {
+          letterUnder.style.position = "unset";
+          element.classList.remove("active");
+        } else {
+          element.classList.add("active");
+          this.transformProcessor.swap(letterUnder);
+        }
       }
-    }
 
-    this.draggedElement.classList.add("active");
+      element.classList.add("active");
+    });
 
     this.transformProcessor.resetStartShift();
     this.draggedElement = null;
   };
 }
+
+export default DragProcessor;

@@ -1,5 +1,5 @@
 import { KeyboardProcessor } from "./modules/keyboard/keyboardProcessor.js";
-import { DragProcessor } from "./modules/drag/dragProcessor.js";
+import DragProcessor from "./modules/drag/dragProcessor.js";
 import { InteractionProcessor } from "./modules/interaction/interactionProcessor.js";
 import { TransformProcessor } from "./modules/transform/transformProcessor.js";
 

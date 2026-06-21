@@ -51,7 +51,7 @@ export class InteractionProcessor {
     const targetInY = this.checkINSetY(event, inSetY);
     const target = this.check(event);
 
-    draggedElement.style.pointerEvents = "";
+    draggedElement.style.pointerEvents = "auto";
 
     return (
       targetOff?.closest(".letter") ||
@@ -120,6 +120,22 @@ export class InteractionProcessor {
         this.box.remove();
         this.box = null;
       }
+    });
+  }
+
+  getLetterElements() {
+    return Array.from(document.getElementsByClassName("letter"));
+  }
+
+  getSelectedLetters() {
+    return this.getLetterElements().filter((letter) =>
+      letter.classList.contains("selected"),
+    );
+  }
+
+  unsetSelected(elements) {
+    elements.forEach((element) => {
+      element.classList.remove("selected");
     });
   }
 
