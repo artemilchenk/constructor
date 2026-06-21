@@ -140,8 +140,7 @@ export class InteractionProcessor {
   }
 
   checkForViewUnder = (draggedElement, letterUnder) => {
-    const positionUnder = window.getComputedStyle(letterUnder).position;
-    return positionUnder !== "absolute";
+    return !letterUnder.classList.contains("active")
   };
 
   checkForViewLetterOver = (draggedElement, letterUnder) => {
