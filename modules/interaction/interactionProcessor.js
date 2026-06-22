@@ -138,15 +138,4 @@ export class InteractionProcessor {
       element.classList.remove("selected");
     });
   }
-
-  checkForViewUnder = (draggedElement, letterUnder) => {
-    return !letterUnder.classList.contains("active");
-  };
-
-  checkForViewLetterOver = (draggedElement, letterUnder) => {
-    const isDraggedElementActive = draggedElement.classList.contains("active");
-    const isLetterUnderActive = letterUnder.classList.contains("active");
-    console.log({ isLetterUnderActive, isDraggedElementActive });
-    return isLetterUnderActive && !isDraggedElementActive;
-  };
 }

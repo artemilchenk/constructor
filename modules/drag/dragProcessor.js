@@ -22,6 +22,8 @@ class DragProcessor {
       e.preventDefault();
       e.stopPropagation();
 
+      this.transformProcessor.resetStartShift(el);
+
       const selected = this.interactionProcessor.getSelectedLetters();
 
       if (selected.includes(el)) {
@@ -45,6 +47,8 @@ class DragProcessor {
         element._dragStartLeft = rect.left - this.containerRect.left - 4;
         element._dragStartTop = rect.top - this.containerRect.top - 4;
 
+        element._prevPosition = element.style.position;
+
         element.style.left = `${element._dragStartLeft}px`;
         element.style.top = `${element._dragStartTop}px`;
       });
@@ -67,40 +71,25 @@ class DragProcessor {
   onMouseUp = (e) => {
     if (!this.draggedElement) return;
 
-    this.draggedElement.forEach((element) => {
-      const letterUnder = this.interactionProcessor.checkUnder(e, element, {
-        offsetX: element._dragOffsetX,
-        offsetY: element._dragOffsetY,
-      });
+    this.draggedElement.forEach((elementDragged) => {
+      const letterUnder = this.interactionProcessor.checkUnder(
+        e,
+        elementDragged,
+        {
+          offsetX: elementDragged._dragOffsetX,
+          offsetY: elementDragged._dragOffsetY,
+        },
+      );
 
       if (letterUnder) {
         if (!this.draggedElement.includes(letterUnder)) {
-          if (
-            this.interactionProcessor.checkForViewUnder(element, letterUnder)
-          ) {
-            element.classList.remove("active");
-            element.style.position = "unset";
-          }
-
-          if (
-            this.interactionProcessor.checkForViewLetterOver(
-              element,
-              letterUnder,
-            )
-          ) {
-            letterUnder.style.position = "unset";
-            letterUnder.classList.remove("active");
-          }
-
-          this.transformProcessor.swap(letterUnder);
+          this.transformProcessor.swap(elementDragged, letterUnder);
         }
       }
 
-      element.classList.add("active");
-      element.classList.remove("active-drag");
+      elementDragged.classList.remove("active-drag");
     });
 
-    this.transformProcessor.resetStartShift();
     this.draggedElement = null;
   };
 }
