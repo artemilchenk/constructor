@@ -22,7 +22,7 @@ class DragProcessor {
       e.preventDefault();
       e.stopPropagation();
 
-      this.transformProcessor.resetStartShift(el);
+      this.transformProcessor.setStartShift(el);
 
       const selected = this.interactionProcessor.getSelectedLetters();
 
@@ -38,7 +38,7 @@ class DragProcessor {
 
       this.containerRect = this.container.getBoundingClientRect();
 
-      this.draggedElement.forEach((element, index) => {
+      this.draggedElement.forEach((element) => {
         const rect = element.getBoundingClientRect();
 
         element._dragOffsetX = e.clientX - rect.left;

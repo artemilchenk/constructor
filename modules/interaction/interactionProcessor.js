@@ -37,6 +37,7 @@ export class InteractionProcessor {
   }
 
   checkUnder(event, draggedElement, { offsetX, offsetY }) {
+
     const rectDragged = draggedElement.getBoundingClientRect();
     const inSetX = Math.round(rectDragged.width - offsetX);
     const inSetY = Math.round(rectDragged.height - offsetY);

@@ -5,18 +5,13 @@ export class TransformProcessor {
     this.container = container;
   }
   shift(draggedElement, x, y) {
-    if (!draggedElement._startShiftX || !draggedElement._startShiftY) {
-      draggedElement._startShiftX = x;
-      draggedElement._startShiftY = y;
-    }
-
     draggedElement.style.left = `${x}px`;
     draggedElement.style.top = `${y}px`;
   }
 
-  resetStartShift(draggedElement) {
-    draggedElement._startShiftX = null;
-    draggedElement._startShiftY = null;
+  setStartShift(draggedElement) {
+    draggedElement._startShiftX = draggedElement.style.left;
+    draggedElement._startShiftY = draggedElement.style.top;
   }
 
   swap(draggedElement, letterUnder) {
@@ -24,7 +19,7 @@ export class TransformProcessor {
       draggedElement.style.position = "static";
     } else letterUnder.style.position = draggedElement._prevPosition;
 
-    letterUnder.style.left = `${draggedElement._startShiftX}px`;
-    letterUnder.style.top = `${draggedElement._startShiftY}px`;
+    letterUnder.style.left = `${draggedElement._startShiftX}`;
+    letterUnder.style.top = `${draggedElement._startShiftY}`;
   }
 }
