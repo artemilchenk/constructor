@@ -73,24 +73,27 @@ class DragProcessor {
         offsetY: element._dragOffsetY,
       });
 
-      element.classList.remove("active-drag");
-
-      if (letterUnder && !this.draggedElement.includes(letterUnder)) {
-        if (this.interactionProcessor.checkForViewUnder(element, letterUnder)) {
-          element.style.position = "unset";
-          element.classList.remove("active");
-        } else if (
-          this.interactionProcessor.checkForViewLetterOver(element, letterUnder)
-        ) {
-          letterUnder.style.position = "unset";
-          element.classList.remove("active");
-        } else {
-          element.classList.add("active");
-          this.transformProcessor.swap(letterUnder);
+      if (letterUnder) {
+        if(!this.draggedElement.includes(letterUnder)){
+          if (this.interactionProcessor.checkForViewUnder(element, letterUnder)) {
+            console.log(0)
+            element.classList.remove("active");
+            element.style.position = "unset";
+          } else if (
+              this.interactionProcessor.checkForViewLetterOver(element, letterUnder)
+          ) {
+            console.log(1)
+            letterUnder.style.position = "unset";
+            element.classList.remove("active");
+          } else {
+            this.transformProcessor.swap(letterUnder);
+          }
         }
+      } else {
+        element.classList.add("active");
       }
 
-      element.classList.add("active");
+      element.classList.remove("active-drag");
     });
 
     this.transformProcessor.resetStartShift();
