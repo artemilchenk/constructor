@@ -8,61 +8,39 @@ export class InteractionProcessor {
     this.transformProcessor = transformProcessor;
   }
 
-  checkOffSetX(event, x) {
-    return document.elementFromPoint(event.clientX - x, event.clientY);
-  }
+  checkUnder(draggedElement) {
+    const draggedRect = draggedElement.getBoundingClientRect();
+    const letters = this.getLetterElements();
 
-  checkOffSetY(event, y) {
-    return document.elementFromPoint(event.clientX, event.clientY - y);
-  }
+    let bestMatch = null;
+    let maxArea = 0;
 
-  checkOffSet(event, x, y) {
-    return document.elementFromPoint(event.clientX - x, event.clientY - y);
-  }
+    for (const letter of letters) {
+      if (letter === draggedElement) continue;
 
-  checkINSetX(event, x) {
-    return document.elementFromPoint(event.clientX + x, event.clientY);
-  }
+      const targetRec = letter.getBoundingClientRect();
 
-  checkINSetY(event, y) {
-    return document.elementFromPoint(event.clientX, event.clientY + y);
-  }
+      const overlapWidth = Math.max(
+        0,
+        Math.min(draggedRect.right, targetRec.right) -
+          Math.max(draggedRect.left, targetRec.left),
+      );
 
-  checkINSet(event, x, y) {
-    return document.elementFromPoint(event.clientX + x, event.clientY + y);
-  }
+      const overlapHeight = Math.max(
+        0,
+        Math.min(draggedRect.bottom, targetRec.bottom) -
+          Math.max(draggedRect.top, targetRec.top),
+      );
 
-  check(event) {
-    return document.elementFromPoint(event.clientX, event.clientY);
-  }
+      const area = overlapWidth * overlapHeight;
 
-  checkUnder(event, draggedElement, { offsetX, offsetY }) {
+      if (area > maxArea) {
+        maxArea = area;
+        bestMatch = letter;
+      }
+    }
 
-    const rectDragged = draggedElement.getBoundingClientRect();
-    const inSetX = Math.round(rectDragged.width - offsetX);
-    const inSetY = Math.round(rectDragged.height - offsetY);
-
-    draggedElement.style.pointerEvents = "none";
-
-    const targetOff = this.checkOffSet(event, offsetX, offsetY);
-    const targetOffX = this.checkOffSetX(event, offsetX);
-    const targetOffY = this.checkOffSetY(event, offsetY);
-    const targetIn = this.checkINSet(event, inSetX, inSetY);
-    const targetInX = this.checkINSetX(event, inSetX);
-    const targetInY = this.checkINSetY(event, inSetY);
-    const target = this.check(event);
-
-    draggedElement.style.pointerEvents = "auto";
-
-    return (
-      targetOff?.closest(".letter") ||
-      targetIn?.closest(".letter") ||
-      target?.closest(".letter") ||
-      targetOffX?.closest(".letter") ||
-      targetOffY?.closest(".letter") ||
-      targetInX?.closest(".letter") ||
-      targetInY?.closest(".letter")
-    );
+    return bestMatch;
   }
 
   select(e) {

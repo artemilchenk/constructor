@@ -14,12 +14,12 @@ export class TransformProcessor {
     draggedElement._startShiftY = draggedElement.style.top;
   }
 
-  swap(draggedElement, letterUnder) {
-    if (letterUnder.style.position === "static") {
+  swap(draggedElement, targetElement) {
+    if (targetElement.style.position === "static") {
       draggedElement.style.position = "static";
-    } else letterUnder.style.position = draggedElement._prevPosition;
+    } else targetElement.style.position = draggedElement._prevPosition;
 
-    letterUnder.style.left = `${draggedElement._startShiftX}`;
-    letterUnder.style.top = `${draggedElement._startShiftY}`;
+    targetElement.style.left = `${draggedElement._startShiftX}`;
+    targetElement.style.top = `${draggedElement._startShiftY}`;
   }
 }

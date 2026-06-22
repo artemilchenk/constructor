@@ -71,23 +71,14 @@ class DragProcessor {
   onMouseUp = (e) => {
     if (!this.draggedElement) return;
 
-    this.draggedElement.forEach((elementDragged) => {
-      const letterUnder = this.interactionProcessor.checkUnder(
-        e,
-        elementDragged,
-        {
-          offsetX: elementDragged._dragOffsetX,
-          offsetY: elementDragged._dragOffsetY,
-        },
-      );
+    this.draggedElement.forEach((dragged) => {
+      const target = this.interactionProcessor.checkUnder(dragged);
 
-      if (letterUnder) {
-        if (!this.draggedElement.includes(letterUnder)) {
-          this.transformProcessor.swap(elementDragged, letterUnder);
-        }
-      }
+      dragged.classList.remove("active-drag");
 
-      elementDragged.classList.remove("active-drag");
+      if (!target) return;
+
+      this.transformProcessor.swap(dragged, target);
     });
 
     this.draggedElement = null;
