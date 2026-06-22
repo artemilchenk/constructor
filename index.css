@@ -69,11 +69,8 @@ button {
     transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
-.letter:hover {
-    z-index: 1000;
-}
-
 .letter.active-drag {
+    z-index: 1000;
     cursor: grabbing;
    /* transform: scale(1.05);*/
     background: #f0f8ff;
