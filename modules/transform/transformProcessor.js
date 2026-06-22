@@ -10,7 +10,7 @@ export class TransformProcessor {
   }
 
   swap(dragged, target) {
-    if (dragged.style.position === "static") {
+    if (target.style.position === "static") {
       dragged.style.position = "static";
     } else target.style.position = dragged._prevPosition;
 
