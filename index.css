@@ -72,7 +72,7 @@ button {
 .letter.active-drag {
     z-index: 1000;
     cursor: grabbing;
-   /* transform: scale(1.05);*/
+    transform: scale(1.05);
     background: #f0f8ff;
     border-color: #99c2ff;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
@@ -80,7 +80,7 @@ button {
 }
 
 .selected {
-    outline: 2px solid darkred;
+    outline: 2px solid #0066cc;
 }
 
 .selection-box {
