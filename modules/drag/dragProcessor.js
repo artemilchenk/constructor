@@ -22,8 +22,6 @@ class DragProcessor {
       e.preventDefault();
       e.stopPropagation();
 
-      this.transformProcessor.setStartShift(el);
-
       const selected = this.interactionProcessor.getSelectedLetters();
 
       if (selected.includes(el)) {
@@ -44,13 +42,13 @@ class DragProcessor {
         element._dragOffsetX = e.clientX - rect.left;
         element._dragOffsetY = e.clientY - rect.top;
 
-        element._dragStartLeft = rect.left - this.containerRect.left - 4;
-        element._dragStartTop = rect.top - this.containerRect.top - 4;
+        element._dragPrevLeft = rect.left - this.containerRect.left - 4;
+        element._dragPrevTop = rect.top - this.containerRect.top - 4;
 
         element._prevPosition = element.style.position;
 
-        element.style.left = `${element._dragStartLeft}px`;
-        element.style.top = `${element._dragStartTop}px`;
+        element.style.left = `${element._dragPrevLeft}px`;
+        element.style.top = `${element._dragPrevTop}px`;
       });
     });
   }
@@ -72,24 +70,18 @@ class DragProcessor {
     if (!this.draggedElement) return;
 
     this.draggedElement.forEach((dragged) => {
-      const [bestTarget, ...otherTargets] =
-        this.interactionProcessor.checkUnder(dragged);
+      const rect = dragged.getBoundingClientRect();
+
+      dragged._dragCurrentLeft = rect.left - this.containerRect.left - 4;
+      dragged._dragCurrentTop = rect.top - this.containerRect.top - 4;
+
+      const target = this.interactionProcessor.checkUnder(dragged);
 
       dragged.classList.remove("active-drag");
 
-      if (!bestTarget) return;
+      if (!target) return;
 
-      this.transformProcessor.swap(dragged, bestTarget);
-
-      otherTargets.forEach((target) => {
-        const { x, y } = this.interactionProcessor.getRandomPosition(
-          this.container,
-          target,
-        );
-
-        target.style.left = `${x}px`;
-        target.style.top = `${y}px`;
-      });
+      this.transformProcessor.swap(dragged, target);
     });
 
     this.draggedElement = null;
