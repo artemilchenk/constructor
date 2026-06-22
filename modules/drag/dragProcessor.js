@@ -72,13 +72,24 @@ class DragProcessor {
     if (!this.draggedElement) return;
 
     this.draggedElement.forEach((dragged) => {
-      const target = this.interactionProcessor.checkUnder(dragged);
+      const [bestTarget, ...otherTargets] =
+        this.interactionProcessor.checkUnder(dragged);
 
       dragged.classList.remove("active-drag");
 
-      if (!target) return;
+      if (!bestTarget) return;
 
-      this.transformProcessor.swap(dragged, target);
+      this.transformProcessor.swap(dragged, bestTarget);
+
+      otherTargets.forEach((target) => {
+        const { x, y } = this.interactionProcessor.getRandomPosition(
+          this.container,
+          target,
+        );
+
+        target.style.left = `${x}px`;
+        target.style.top = `${y}px`;
+      });
     });
 
     this.draggedElement = null;

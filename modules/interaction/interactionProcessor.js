@@ -14,22 +14,23 @@ export class InteractionProcessor {
 
     let bestMatch = null;
     let maxArea = 0;
+    let allMatches = [];
 
     for (const letter of letters) {
       if (letter === draggedElement) continue;
 
-      const targetRec = letter.getBoundingClientRect();
+      const letterRect = letter.getBoundingClientRect();
 
       const overlapWidth = Math.max(
         0,
-        Math.min(draggedRect.right, targetRec.right) -
-          Math.max(draggedRect.left, targetRec.left),
+        Math.min(draggedRect.right, letterRect.right) -
+          Math.max(draggedRect.left, letterRect.left),
       );
 
       const overlapHeight = Math.max(
         0,
-        Math.min(draggedRect.bottom, targetRec.bottom) -
-          Math.max(draggedRect.top, targetRec.top),
+        Math.min(draggedRect.bottom, letterRect.bottom) -
+          Math.max(draggedRect.top, letterRect.top),
       );
 
       const area = overlapWidth * overlapHeight;
@@ -38,9 +39,15 @@ export class InteractionProcessor {
         maxArea = area;
         bestMatch = letter;
       }
+
+      if (area > 0) {
+        allMatches.push(letter);
+      }
     }
 
-    return bestMatch;
+    const otherMatches = allMatches.filter((letter) => letter !== bestMatch);
+
+    return [bestMatch, ...otherMatches];
   }
 
   select(e) {
@@ -116,5 +123,48 @@ export class InteractionProcessor {
     elements.forEach((element) => {
       element.classList.remove("selected");
     });
+  }
+
+  getRandomPosition(container, element) {
+    const containerRect = container.getBoundingClientRect();
+    const elementRect = element.getBoundingClientRect();
+    const elementWidth = element.offsetWidth;
+    const elementHeight = element.offsetHeight;
+    const elements = this.getLetterElements();
+    const maxX = containerRect.width - elementRect.width;
+    const maxY = containerRect.height - elementRect.height;
+
+    function isOverlapping(x, y) {
+      return elements.some((other) => {
+        if (other === element) return false;
+
+        const otherLeft = parseFloat(other.style.left) || 0;
+        const otherTop = parseFloat(other.style.top) || 0;
+        const otherWidth = other.offsetWidth;
+        const otherHeight = other.offsetHeight;
+
+        return !(
+          x + elementWidth <= otherLeft ||
+          x >= otherLeft + otherWidth ||
+          y + elementHeight <= otherTop ||
+          y >= otherTop + otherHeight
+        );
+      });
+    }
+
+    function findPosition(attempt = 0) {
+      if (attempt >= 100) return null;
+
+      const x = Math.random() * maxX;
+      const y = Math.random() * maxY;
+
+      if (isOverlapping(x, y)) {
+        return findPosition(attempt + 1);
+      }
+
+      return { x, y };
+    }
+
+    return findPosition();
   }
 }
