@@ -72,8 +72,8 @@ class DragProcessor {
     this.draggedElement.forEach((dragged) => {
       const rect = dragged.getBoundingClientRect();
 
-      dragged._dragCurrentLeft = rect.left - this.containerRect.left - 2;
-      dragged._dragCurrentTop = rect.top - this.containerRect.top - 2;
+      dragged._dragCurrentLeft = rect.left - this.containerRect.left - 3;
+      dragged._dragCurrentTop = rect.top - this.containerRect.top - 3;
 
       const target = this.interactionProcessor.checkUnder(dragged);
 
