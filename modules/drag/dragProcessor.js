@@ -66,20 +66,24 @@ class DragProcessor {
     });
   };
 
-  onMouseUp = (e) => {
+  onMouseUp = () => {
     if (!this.draggedElement) return;
 
     this.draggedElement.forEach((dragged) => {
-      const rect = dragged.getBoundingClientRect();
-
-      dragged._dragCurrentLeft = rect.left - this.containerRect.left - 3;
-      dragged._dragCurrentTop = rect.top - this.containerRect.top - 3;
-
       const target = this.interactionProcessor.checkUnder(dragged);
 
       dragged.classList.remove("active-drag");
 
-      if (!target) return;
+      if (!target){
+        const draggedRect = dragged.getBoundingClientRect();
+        dragged._dragCurrentLeft = draggedRect.left - this.containerRect.left - 4;
+        dragged._dragCurrentTop = draggedRect.top - this.containerRect.top - 4;
+
+        dragged.style.left = `${dragged._dragCurrentLeft}px`;
+        dragged.style.top = `${dragged._dragCurrentTop}px`;
+
+        return;
+      }
 
       this.transformProcessor.swap(dragged, target);
     });

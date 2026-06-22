@@ -9,15 +9,21 @@ export class TransformProcessor {
     draggedElement.style.top = `${y}px`;
   }
 
-  swap(draggedElement, targetElement) {
-    if (targetElement.style.position === "static") {
-      draggedElement.style.position = "static";
-    } else targetElement.style.position = draggedElement._prevPosition;
+  swap(dragged, target) {
+    if (dragged.style.position === "static") {
+      dragged.style.position = "static";
+    } else target.style.position = dragged._prevPosition;
 
-    targetElement.style.left = `${draggedElement._dragPrevLeft}px`;
-    targetElement.style.top = `${draggedElement._dragPrevTop}px`;
+    dragged._dragCurrentLeft = `${target._dragCurrentLeft}`
+    dragged._dragCurrentTop = `${target._dragCurrentTop}`
 
-    draggedElement.style.left = `${targetElement._dragCurrentLeft}px`;
-    draggedElement.style.top = `${targetElement._dragCurrentTop}px`;
+    dragged.style.left = `${dragged._dragCurrentLeft}px`;
+    dragged.style.top = `${dragged._dragCurrentTop}px`;
+
+    target._dragCurrentLeft = `${dragged._dragPrevLeft}`;
+    target._dragCurrentTop = `${dragged._dragPrevTop}`;
+
+    target.style.left = `${target._dragCurrentLeft}px`;
+    target.style.top = `${target._dragCurrentTop}px`;
   }
 }
